@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Performance | iPhone</title>
+
+  <!-- base/home styles (your existing file) -->
+  <link rel="stylesheet" href="home css file.css">
+
+  <!-- performance-specific styles -->
+  <link rel="stylesheet" href="performance.css">
+
+  <!-- Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+ 
+  <!-- Hero -->
+  
+    <!-- Chip Image below Chart -->
+<section class="chip-section fade-up">
+  <img src="chip.png" alt="A-series chip" class="chip-img-centered">
+</section>
+
+
+
+    <!-- Chart Section -->
+    <section class="chart-section fade-up">
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2>GPU Performance — iPhone Generations</h2>
+          <p class="muted">Relative GPU performance (visualized). Values: iPhone 14 Pro = 100, 15 Pro = 120, 16 Pro = 140, 17 Pro = 165</p>
+        </div>
+        <canvas id="gpuBarChart" width="800" height="420" aria-label="GPU performance bar chart" role="img"></canvas>
+      </div>
+    </section>
+
+    <!-- Highlights that animate on scroll -->
+    <section class="performance-grid container-wide">
+      <div class="perf-item fade-up">
+        <div class="perf-card">
+    <img src="performance1.jpg" alt="Performance Feature 1">
+    <h3>Blazing Fast App Launch</h3>
+    <p>Experience instant responsiveness powered by the A-series chip, optimized for real-world usage.</p>
+  </div>
+
+        <h3>Pro-grade GPU</h3>
+        <p>Console-level rendering for complex shaders and ultra-smooth frame rates.</p>
+      </div>
+
+      <div class="perf-item fade-up">
+        <div class="perf-card">
+    <img src="performance2.jpg" alt="Performance Feature 2">
+    <h3>Pro-Level Gaming Graphics</h3>
+    <p>Smooth 120FPS visuals with HDR rendering deliver console-like immersion in mobile.</p>
+  </div>
+
+        <h3>Optimized Efficiency</h3>
+        <p>Power-saving architecture gives extraordinary battery life even under load.</p>
+      </div>
+
+      <div class="perf-item fade-up">
+        <div class="perf-card">
+    <img src="performance3.jpg" alt="Performance Feature 3">
+    <h3>AI-Powered Efficiency</h3>
+    <p>On-device machine learning accelerates everything from photo processing to Siri intelligence.</p>
+  </div>
+        <h3>Real-time ML Acceleration</h3>
+        <p>On-device neural tasks run faster and more efficiently than ever.</p>
+      </div>
+    </section>
+  </main>
+
+
+
+
+  
+
+
+
+  <!-- Footer -->
+  <footer>
+    <p>©️ 2025 iPhone Inspired Website. All rights reserved.</p>
+  </footer>
+
+  <!-- Inline JS: Chart config + scroll animations -->
+  <script>
+    // ---------- Chart Data (confirmed values) ----------
+    const labels = ['iPhone 14 Pro', 'iPhone 15 Pro', 'iPhone 16 Pro', 'iPhone 17 Pro'];
+    const dataValues = [100, 120, 140, 165];
+
+    // Create gradient for a glossy Apple-like bar
+    function createBarGradient(ctx, area) {
+      const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
+      gradient.addColorStop(0, 'rgba(0,122,255,0.18)'); // light
+      gradient.addColorStop(0.5, 'rgba(0,122,255,0.30)');
+      gradient.addColorStop(1, 'rgba(0,122,255,0.55)'); // stronger
+      return gradient;
+    }
+
+    // Chart initialization after DOM loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      const ctx = document.getElementById('gpuBarChart').getContext('2d');
+
+      // Create chart with plugin to apply gradient after layout
+      const gpuChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Relative GPU Performance',
+            data: dataValues,
+            borderRadius: 12,
+            borderSkipped: false,
+            maxBarThickness: 56,
+            backgroundColor: function(context) {
+              const chart = context.chart;
+              const {ctx, chartArea} = chart;
+              if (!chartArea) {
+                // before render - return fallback
+                return 'rgba(0,122,255,0.35)';
+              }
+              return createBarGradient(ctx, chartArea);
+            },
+            hoverBackgroundColor: 'rgba(0,122,255,0.75)',
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 900,
+            easing: 'easeOutCubic'
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              yAlign: 'bottom',
+              backgroundColor: 'rgba(17,17,17,0.95)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              padding: 10,
+              cornerRadius: 8,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + '%';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#eee',
+                font: { size: 13, weight: 600 }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              suggestedMax: 180,
+              grid: {
+                color: 'rgba(255,255,255,0.06)',
+                borderDash: [3, 3]
+              },
+              ticks: {
+                color: '#ddd',
+                callback: function(value) { return value + '%'; },
+                stepSize: 20
+              }
+            }
+          }
+        }
+      });
+
+      // ---------- Fade-up Scroll Animations (Apple-like) ----------
+      const observerOptions = {
+        threshold: 0.12
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            // Optionally unobserve to prevent repeated triggers
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      // observe all fade-up elements
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
